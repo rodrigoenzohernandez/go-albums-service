@@ -1,7 +1,7 @@
 
 web-service-gin
 
-API that provides access to albumbs. All data is stored in memory.
+API that provides access to albums. All data is stored in memory.
 
 # Endpoints
 
