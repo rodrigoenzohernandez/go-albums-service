@@ -5,9 +5,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
+	"github.com/rodrigoenzohernandez/web-service-gin/internal/utils/logger"
 )
 
 type album models.Album
+
+var log = logger.GetLogger("album_handler")
 
 var albums = []album{
 	{ID: "1", Title: "Blue Train", Artist: "John Coltrane", Price: 56.99},
@@ -28,6 +31,7 @@ func (a *Albums) Create(c *gin.Context) {
 
 	// Bind the received JSON to newAlbum.
 	if err := c.BindJSON(&newAlbum); err != nil {
+		log.Error("Error on Album creation")
 		return
 	}
 
