@@ -19,15 +19,18 @@ var albums = []album{
 	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
 }
 
-// getAlbums responds with the list of all albums as JSON.
-func GetAlbums(c *gin.Context) {
+type Albums struct{}
+
+// Returns all the albums as JSON.
+func (a *Albums) GetAll(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, albums)
 }
 
-func PostAlbums(c *gin.Context) {
+// Creates an album from JSON received in the request body.
+func (a *Albums) Create(c *gin.Context) {
 	var newAlbum album
 
-	// Call BindJSON to bind the received JSON to newAlbum.
+	// Bind the received JSON to newAlbum.
 	if err := c.BindJSON(&newAlbum); err != nil {
 		return
 	}
@@ -38,9 +41,8 @@ func PostAlbums(c *gin.Context) {
 
 }
 
-// getAlbumByID locates the album whose ID value matches the id  parameter sent by the client, then returns that album as a response.
-
-func GetAlbumByID(c *gin.Context) {
+// Returns a single album whose ID value matches the parameter.
+func (a *Albums) GetByID(c *gin.Context) {
 	id := c.Param("id")
 
 	// Loop over the list of albums, looking for an album whose ID value matches the parameter.

@@ -7,9 +7,11 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.GET("/albums", handlers.GetAlbums)
-	router.GET("/albums/:id", handlers.GetAlbumByID)
-	router.POST("/albums", handlers.PostAlbums)
+	albumHandler := handlers.Albums{}
+
+	router.GET("/albums", albumHandler.GetAll)
+	router.GET("/albums/:id", albumHandler.GetByID)
+	router.POST("/albums", albumHandler.Create)
 
 	router.Run("localhost:8080")
 }
