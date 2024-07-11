@@ -1,0 +1,8 @@
+# IDE
+.vscode
+
+# Binaries for programs and plugins
+bin/
+
+# Config
+.env
