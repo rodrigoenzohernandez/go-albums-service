@@ -1,4 +1,4 @@
-package database
+package repository
 
 import (
 	"database/sql"
@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var log = logger.GetLogger("database")
+var log = logger.GetLogger("repository")
 
 func Connect() *sql.DB {
 
