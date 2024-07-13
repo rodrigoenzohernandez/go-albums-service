@@ -13,6 +13,7 @@ type AlbumRepositoryInterface interface {
 	SelectByID(id string) (*Album, error)
 	Create(album Album) (*Album, error)
 	AlbumExists(title, artist string) (bool, error)
+	Update(id string, album Album) (*Album, error)
 }
 
 type AlbumRepository struct {
@@ -84,4 +85,15 @@ func (repo *AlbumRepository) AlbumExists(title, artist string) (bool, error) {
 		return false, err
 	}
 	return exists, nil
+}
+
+func (repo *AlbumRepository) Update(id string, album Album) (*Album, error) {
+	query := `UPDATE "dev-schema".albums SET title = $1, artist = $2, price = $3 WHERE id = $4 RETURNING id, title, artist, price`
+
+	err := repo.DB.QueryRow(query, album.Title, album.Artist, album.Price, id).Scan(&album.ID, &album.Title, &album.Artist, &album.Price)
+	if err != nil {
+		return nil, err
+	}
+
+	return &album, nil
 }
