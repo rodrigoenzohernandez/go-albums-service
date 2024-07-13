@@ -59,12 +59,8 @@ func (h *AlbumHandler) GetByID(c *gin.Context) {
 }
 
 func (h *AlbumHandler) Create(c *gin.Context) {
-	var album Album
-
-	if err := c.BindJSON(&album); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	albumSetInMiddleware, _ := c.Get("album")
+	album, _ := albumSetInMiddleware.(models.Album)
 
 	createdAlbum, err := h.Repo.Create(repository.Album(album))
 	if err != nil {

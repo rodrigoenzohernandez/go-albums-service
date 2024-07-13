@@ -12,6 +12,7 @@ type AlbumRepositoryInterface interface {
 	SelectAll() ([]Album, error)
 	SelectByID(id string) (*Album, error)
 	Create(album Album) (*Album, error)
+	AlbumExists(title, artist string) (bool, error)
 }
 
 type AlbumRepository struct {
@@ -73,4 +74,14 @@ func (repo *AlbumRepository) Create(album Album) (*Album, error) {
 	}
 
 	return &album, nil
+}
+
+func (repo *AlbumRepository) AlbumExists(title, artist string) (bool, error) {
+	query := `SELECT EXISTS(SELECT 1 FROM "dev-schema".albums WHERE title = $1 AND artist = $2)`
+	var exists bool
+	err := repo.DB.QueryRow(query, title, artist).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
 }
