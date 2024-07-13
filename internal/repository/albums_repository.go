@@ -10,6 +10,7 @@ type album models.Album
 
 type AlbumRepositoryInterface interface {
 	SelectAll() ([]album, error)
+	SelectByID(id string) (*album, error)
 }
 
 type AlbumRepository struct {
@@ -44,4 +45,20 @@ func (repo *AlbumRepository) SelectAll() ([]album, error) {
 	}
 
 	return albums, nil
+}
+
+func (repo *AlbumRepository) SelectByID(id string) (*album, error) {
+	var a album
+	query := `SELECT id, title, artist, price FROM "dev-schema".albums WHERE id = $1`
+
+	err := repo.DB.QueryRow(query, id).Scan(&a.ID, &a.Title, &a.Artist, &a.Price)
+	if err != nil {
+
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+	return &a, nil
 }
