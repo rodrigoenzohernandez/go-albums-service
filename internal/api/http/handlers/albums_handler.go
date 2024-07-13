@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/repository"
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/utils/logger"
@@ -33,11 +34,36 @@ func NewAlbumHandler(repo repository.AlbumRepositoryInterface) *AlbumHandler {
 func (h *AlbumHandler) GetAll(c *gin.Context) {
 	albums, err := h.Repo.SelectAll()
 	if err != nil {
-		log.Error("Error on Album GetAll")
+		log.Error("Error on GetAll")
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error", "error": err.Error()})
 		return
 	}
 	c.IndentedJSON(http.StatusOK, albums)
+}
+
+// Returns an album by ID as JSON.
+func (h *AlbumHandler) GetByID(c *gin.Context) {
+
+	id := c.Param("id")
+
+	if _, err := uuid.Parse(id); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid ID format, UUID is expected"})
+		return
+	}
+
+	album, err := h.Repo.SelectByID(id)
+	if err != nil {
+		log.Error("Error on GetByID")
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error", "error": err.Error()})
+		return
+	}
+
+	if album == nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Album not found"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, album)
 }
 
 // Creates an album from JSON received in the request body.
@@ -53,22 +79,5 @@ func (a *Albums) Create(c *gin.Context) {
 	// Add the new album to the slice.
 	albums = append(albums, newAlbum)
 	c.IndentedJSON(http.StatusCreated, newAlbum)
-
-}
-
-// Returns a single album whose ID value matches the parameter.
-func (a *Albums) GetByID(c *gin.Context) {
-	id := c.Param("id")
-
-	// Loop over the list of albums, looking for an album whose ID value matches the parameter.
-
-	for _, a := range albums {
-		if a.ID == id {
-			c.IndentedJSON(http.StatusOK, a)
-			return
-		}
-	}
-
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
 
 }
