@@ -1,0 +1,13 @@
+BEGIN;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE SCHEMA IF NOT EXISTS "dev-schema";
+
+CREATE TABLE IF NOT EXISTS "dev-schema".albums (
+    ID     UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    Title  VARCHAR(255) NOT NULL,
+    Artist VARCHAR(255) NOT NULL,
+    Price  NUMERIC(10, 2) NOT NULL
+);
+COMMIT;
