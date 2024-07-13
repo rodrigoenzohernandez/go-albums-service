@@ -6,11 +6,12 @@ import (
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
 )
 
-type album models.Album
+type Album models.Album
 
 type AlbumRepositoryInterface interface {
-	SelectAll() ([]album, error)
-	SelectByID(id string) (*album, error)
+	SelectAll() ([]Album, error)
+	SelectByID(id string) (*Album, error)
+	Create(album Album) (*Album, error)
 }
 
 type AlbumRepository struct {
@@ -21,8 +22,8 @@ func NewAlbumRepo(db *sql.DB) AlbumRepositoryInterface {
 	return &AlbumRepository{DB: db}
 }
 
-func (repo *AlbumRepository) SelectAll() ([]album, error) {
-	var albums []album
+func (repo *AlbumRepository) SelectAll() ([]Album, error) {
+	var albums []Album
 
 	query := `SELECT id, title, artist, price FROM "dev-schema".albums`
 
@@ -33,7 +34,7 @@ func (repo *AlbumRepository) SelectAll() ([]album, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var album album
+		var album Album
 		if err := rows.Scan(&album.ID, &album.Title, &album.Artist, &album.Price); err != nil {
 			return nil, err
 		}
@@ -47,8 +48,8 @@ func (repo *AlbumRepository) SelectAll() ([]album, error) {
 	return albums, nil
 }
 
-func (repo *AlbumRepository) SelectByID(id string) (*album, error) {
-	var a album
+func (repo *AlbumRepository) SelectByID(id string) (*Album, error) {
+	var a Album
 	query := `SELECT id, title, artist, price FROM "dev-schema".albums WHERE id = $1`
 
 	err := repo.DB.QueryRow(query, id).Scan(&a.ID, &a.Title, &a.Artist, &a.Price)
@@ -61,4 +62,15 @@ func (repo *AlbumRepository) SelectByID(id string) (*album, error) {
 		return nil, err
 	}
 	return &a, nil
+}
+
+func (repo *AlbumRepository) Create(album Album) (*Album, error) {
+	query := `INSERT INTO "dev-schema".albums (title, artist, price) VALUES ($1, $2, $3) RETURNING id`
+
+	err := repo.DB.QueryRow(query, album.Title, album.Artist, album.Price).Scan(&album.ID)
+	if err != nil {
+		return &Album{}, err
+	}
+
+	return &album, nil
 }

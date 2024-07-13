@@ -10,17 +10,9 @@ import (
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/utils/logger"
 )
 
-type album models.Album
+type Album models.Album
 
 var log = logger.GetLogger("album_handler")
-
-var albums = []album{
-	{ID: "1", Title: "Blue Train", Artist: "John Coltrane", Price: 56.99},
-	{ID: "2", Title: "Jeru", Artist: "Gerry Mulligan", Price: 17.99},
-	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
-}
-
-type Albums struct{}
 
 type AlbumHandler struct {
 	Repo repository.AlbumRepositoryInterface
@@ -66,18 +58,19 @@ func (h *AlbumHandler) GetByID(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, album)
 }
 
-// Creates an album from JSON received in the request body.
-func (a *Albums) Create(c *gin.Context) {
-	var newAlbum album
+func (h *AlbumHandler) Create(c *gin.Context) {
+	var album Album
 
-	// Bind the received JSON to newAlbum.
-	if err := c.BindJSON(&newAlbum); err != nil {
-		log.Error("Error on Album creation")
+	if err := c.BindJSON(&album); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Add the new album to the slice.
-	albums = append(albums, newAlbum)
-	c.IndentedJSON(http.StatusCreated, newAlbum)
+	createdAlbum, err := h.Repo.Create(repository.Album(album))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	c.JSON(http.StatusCreated, createdAlbum)
 }

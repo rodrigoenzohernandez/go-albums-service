@@ -10,4 +10,6 @@ func RegisterAlbumRoutes(router *gin.Engine, repo repository.AlbumRepositoryInte
 	albumHandler := handlers.NewAlbumHandler(repo)
 	router.GET("/albums", albumHandler.GetAll)
 	router.GET("/albums/:id", albumHandler.GetByID)
+	router.POST("/albums", albumHandler.Create)
+
 }
