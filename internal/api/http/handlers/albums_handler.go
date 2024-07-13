@@ -76,17 +76,42 @@ func (h *AlbumHandler) Update(c *gin.Context) {
 
 	id := c.Param("id")
 
-	isUUID(c, id)
+	isUUID := isUUID(c, id)
+	if !isUUID {
+		return
+	}
 
 	updatedAlbum, err := h.Repo.Update(id, repository.Album(album))
 	if err != nil {
-		log.Info(err.Error())
-
 		c.JSON(http.StatusInternalServerError, gin.H{"Error updating an album": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, updatedAlbum)
+}
+
+// Deletes an album by ID.
+func (h *AlbumHandler) Delete(c *gin.Context) {
+	id := c.Param("id")
+
+	isUUID := isUUID(c, id)
+	if !isUUID {
+		return
+	}
+
+	err := h.Repo.Delete(id)
+	if err != nil {
+		const notFoundMsg = "Album not found"
+		if err.Error() == notFoundMsg {
+			c.JSON(http.StatusNotFound, gin.H{"msg": notFoundMsg})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting an album"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Album deleted successfully"})
 }
 
 // Returns the album from the context. This album is set in the middleware.

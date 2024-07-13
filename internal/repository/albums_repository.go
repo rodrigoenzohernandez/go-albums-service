@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
 )
@@ -14,6 +15,7 @@ type AlbumRepositoryInterface interface {
 	Create(album Album) (*Album, error)
 	AlbumExists(title, artist string) (bool, error)
 	Update(id string, album Album) (*Album, error)
+	Delete(id string) error
 }
 
 type AlbumRepository struct {
@@ -96,4 +98,23 @@ func (repo *AlbumRepository) Update(id string, album Album) (*Album, error) {
 	}
 
 	return &album, nil
+}
+
+func (repo *AlbumRepository) Delete(id string) error {
+	query := `DELETE FROM "dev-schema".albums WHERE id = $1`
+
+	result, err := repo.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("Album not found")
+	}
+
+	return nil
 }
