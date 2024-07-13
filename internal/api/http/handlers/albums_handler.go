@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
+	"github.com/rodrigoenzohernandez/web-service-gin/internal/repository"
 	"github.com/rodrigoenzohernandez/web-service-gin/internal/utils/logger"
 )
 
@@ -20,8 +21,22 @@ var albums = []album{
 
 type Albums struct{}
 
+type AlbumHandler struct {
+	Repo repository.AlbumRepositoryInterface
+}
+
+func NewAlbumHandler(repo repository.AlbumRepositoryInterface) *AlbumHandler {
+	return &AlbumHandler{Repo: repo}
+}
+
 // Returns all the albums as JSON.
-func (a *Albums) GetAll(c *gin.Context) {
+func (h *AlbumHandler) GetAll(c *gin.Context) {
+	albums, err := h.Repo.SelectAll()
+	if err != nil {
+		log.Error("Error on Album GetAll")
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error", "error": err.Error()})
+		return
+	}
 	c.IndentedJSON(http.StatusOK, albums)
 }
 
