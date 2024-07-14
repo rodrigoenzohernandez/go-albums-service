@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/api/http/server"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/api/http/server"
 )
 
 func main() {

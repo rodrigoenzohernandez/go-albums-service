@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/rodrigoenzohernandez/web-service-gin/config"
+	"github.com/rodrigoenzohernandez/go-albums-service/config"
 	"github.com/stretchr/testify/assert"
 )
 

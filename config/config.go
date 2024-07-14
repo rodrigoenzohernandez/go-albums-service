@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/utils/logger"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/utils/logger"
 
 	"github.com/joho/godotenv"
 )

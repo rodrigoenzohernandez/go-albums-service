@@ -7,8 +7,8 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/api/http/routes"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/repository"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/api/http/routes"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/repository"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

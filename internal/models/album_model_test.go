@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/models"
 	"github.com/stretchr/testify/assert"
 )
 

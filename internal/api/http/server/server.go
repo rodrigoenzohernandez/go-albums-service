@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rodrigoenzohernandez/web-service-gin/config"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/api/http/routes"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/repository"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/utils/logger"
+	"github.com/rodrigoenzohernandez/go-albums-service/config"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/api/http/routes"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/repository"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/utils/logger"
 )
 
 var log = logger.GetLogger("server")

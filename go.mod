@@ -1,4 +1,4 @@
-module github.com/rodrigoenzohernandez/web-service-gin
+module github.com/rodrigoenzohernandez/go-albums-service
 
 go 1.22.4
 

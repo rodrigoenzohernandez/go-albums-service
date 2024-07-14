@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/models"
 )
 
 type Album models.Album

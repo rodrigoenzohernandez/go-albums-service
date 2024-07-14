@@ -1,4 +1,4 @@
-# web-service-gin
+# go-albums-service
 
 RestAPI that provides a CRUD of Albums.
 

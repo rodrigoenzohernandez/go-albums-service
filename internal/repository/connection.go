@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/rodrigoenzohernandez/web-service-gin/config"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/utils/logger"
+	"github.com/rodrigoenzohernandez/go-albums-service/config"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/utils/logger"
 
 	_ "github.com/lib/pq"
 )

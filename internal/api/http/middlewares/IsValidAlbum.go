@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
-	"github.com/rodrigoenzohernandez/web-service-gin/internal/repository"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/models"
+	"github.com/rodrigoenzohernandez/go-albums-service/internal/repository"
 )
 
 type Album models.Album
