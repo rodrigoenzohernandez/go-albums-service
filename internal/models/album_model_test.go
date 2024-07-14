@@ -1,11 +1,14 @@
-package models
+package models_test
 
 import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/rodrigoenzohernandez/web-service-gin/internal/models"
 	"github.com/stretchr/testify/assert"
 )
+
+type Album models.Album
 
 func TestAlbumModel(t *testing.T) {
 	tests := []struct {
