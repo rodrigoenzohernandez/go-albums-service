@@ -13,20 +13,25 @@ func NewAlbumRepo(db *sql.DB) *repository.AlbumRepository {
 	return &repository.AlbumRepository{DB: db}
 }
 
-func TestSelectAll(t *testing.T) {
+func InitMocks(t *testing.T) (*sql.DB, sqlmock.Sqlmock, *repository.AlbumRepository) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
-	defer db.Close()
+	t.Cleanup(func() { db.Close() })
+
+	repo := NewAlbumRepo(db)
+	return db, mock, repo
+}
+
+func TestSelectAll(t *testing.T) {
+	_, mock, repo := InitMocks(t)
 
 	rows := sqlmock.NewRows([]string{"id", "title", "artist", "price"}).
 		AddRow("1", "Blue Train", "John Coltrane", 56.99).
 		AddRow("2", "Giant Steps", "John Coltrane", 63.99)
 
 	mock.ExpectQuery("^SELECT id, title, artist, price FROM \"dev-schema\"\\.albums$").WillReturnRows(rows)
-
-	repo := NewAlbumRepo(db)
 
 	albums, err := repo.SelectAll()
 	assert.NoError(t, err)
