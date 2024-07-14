@@ -39,5 +39,17 @@ services:
       - ./db/migrations:/migrations
     command: ["-path=/migrations", "-database=postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable", "up"]
 
+
+  migrate-down:
+    image: migrate/migrate
+    container_name: migrate-down
+    depends_on:
+      - db
+      - api
+    volumes:
+      - ./db/migrations:/migrations
+    command: ["-path=/migrations", "-database=postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable", "down"]
+
+
 volumes:
   postgres_data:
