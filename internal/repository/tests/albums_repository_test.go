@@ -2,6 +2,7 @@ package repository_tests
 
 import (
 	"database/sql"
+	"errors"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -22,10 +23,6 @@ func InitMocks(t *testing.T) (*sql.DB, sqlmock.Sqlmock, *repository.AlbumReposit
 
 	repo := NewAlbumRepo(db)
 	return db, mock, repo
-}
-
-type AlbumRepository struct {
-	DB *sql.DB
 }
 
 func TestSelectAll(t *testing.T) {
@@ -83,5 +80,40 @@ func TestAlbumExists(t *testing.T) {
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestDelete(t *testing.T) {
+	_, mock, repo := InitMocks(t)
+
+	t.Run("Success", func(t *testing.T) {
+		mock.ExpectExec("DELETE FROM \"dev-schema\".albums WHERE id = \\$1").
+			WithArgs("existing-id").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+		err := repo.Delete("existing-id")
+		assert.NoError(t, err)
+	})
+
+	t.Run("Album not found", func(t *testing.T) {
+		mock.ExpectExec("DELETE FROM \"dev-schema\".albums WHERE id = \\$1").
+			WithArgs("non-existing-id").
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		err := repo.Delete("non-existing-id")
+		assert.EqualError(t, err, "Album not found")
+	})
+
+	t.Run("Database error", func(t *testing.T) {
+		mock.ExpectExec("DELETE FROM \"dev-schema\".albums WHERE id = \\$1").
+			WithArgs("any-id").
+			WillReturnError(errors.New("db error"))
+
+		err := repo.Delete("any-id")
+		assert.EqualError(t, err, "db error")
+	})
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("There were unfulfilled expectations: %s", err)
 	}
 }
