@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAlbumBindingFailureWithTestify(t *testing.T) {
+func TestAlbumModel(t *testing.T) {
 	tests := []struct {
 		name   string
 		album  Album
