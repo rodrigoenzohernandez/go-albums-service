@@ -1,0 +1,152 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Album API",
+      "description": "API for managing music albums",
+      "version": "1.0.0"
+    },
+    "host": "localhost:8080",
+    "schemes": ["http"],
+    "basePath": "/",
+    "produces": ["application/json"],
+    "paths": {
+      "/albums": {
+        "get": {
+          "summary": "Returns all albums",
+          "responses": {
+            "200": {
+              "description": "A list of albums",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Album"
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Creates a new album",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "album",
+              "description": "Album to add",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Album"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Album created",
+              "schema": {
+                "$ref": "#/definitions/Album"
+              }
+            }
+          }
+        }
+      },
+      "/albums/{id}": {
+        "get": {
+          "summary": "Returns an album by ID",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string",
+              "description": "ID of the album to fetch"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "An album",
+              "schema": {
+                "$ref": "#/definitions/Album"
+              }
+            },
+            "404": {
+              "description": "Album not found"
+            }
+          }
+        },
+        "put": {
+          "summary": "Updates an existing album",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string",
+              "description": "ID of the album to update"
+            },
+            {
+              "in": "body",
+              "name": "album",
+              "description": "Album data to update",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Album"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Album updated",
+              "schema": {
+                "$ref": "#/definitions/Album"
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Deletes an album",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string",
+              "description": "ID of the album to delete"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Album deleted successfully"
+            },
+            "404": {
+              "description": "Album not found"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Album": {
+        "type": "object",
+        "required": ["title", "artist", "price"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "title": {
+            "type": "string",
+            "example": "Blue Train"
+          },
+          "artist": {
+            "type": "string",
+            "example": "John Coltrane"
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "example": 56.99
+          }
+        }
+      }
+    }
+  }
