@@ -24,6 +24,10 @@ func InitMocks(t *testing.T) (*sql.DB, sqlmock.Sqlmock, *repository.AlbumReposit
 	return db, mock, repo
 }
 
+type AlbumRepository struct {
+	DB *sql.DB
+}
+
 func TestSelectAll(t *testing.T) {
 	_, mock, repo := InitMocks(t)
 
@@ -39,6 +43,24 @@ func TestSelectAll(t *testing.T) {
 	assert.Equal(t, "Blue Train", albums[0].Title)
 	assert.Equal(t, "John Coltrane", albums[1].Artist)
 	assert.NotEqual(t, "Eminem", albums[1].Artist)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestSelectByID(t *testing.T) {
+	_, mock, repo := InitMocks(t)
+
+	rows := sqlmock.NewRows([]string{"id", "title", "artist", "price"}).
+		AddRow("1", "Blue Train", "John Coltrane", 56.99)
+
+	mock.ExpectQuery(`SELECT id, title, artist, price FROM "dev-schema"\.albums WHERE id = \$1`).WillReturnRows(rows)
+	album, err := repo.SelectByID("1")
+	assert.NoError(t, err)
+	assert.Equal(t, "Blue Train", album.Title)
+	assert.Equal(t, "John Coltrane", album.Artist)
+	assert.NotEqual(t, "Eminem", album.Artist)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
