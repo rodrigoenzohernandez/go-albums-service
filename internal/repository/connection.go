@@ -19,10 +19,10 @@ func Connect() *sql.DB {
 	dbName := config.GetEnv("DB_NAME", "dev")
 	password := config.GetEnv("DB_PASSWORD", "p4ssw0rd.db")
 	connectTimeout := config.GetEnv("DB_CONNECT_TIMEOUT", "5")
+	SSLMode := config.GetEnv("DB_SSL_MODE", "enable")
 
-	connStr := fmt.Sprintf("host=%s user=%s dbname=%s password=%s connect_timeout=%s",
-		host, user, dbName, password, connectTimeout)
-
+	connStr := fmt.Sprintf("host=%s user=%s dbname=%s password=%s connect_timeout=%s sslmode=%s",
+		host, user, dbName, password, connectTimeout, SSLMode)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Error("Error connecting to the database.")
