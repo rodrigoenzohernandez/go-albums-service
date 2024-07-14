@@ -66,3 +66,22 @@ func TestSelectByID(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
+
+func TestAlbumExists(t *testing.T) {
+	_, mock, repo := InitMocks(t)
+
+	rows := sqlmock.NewRows([]string{"exists"}).
+		AddRow(true)
+
+	mock.ExpectQuery(`SELECT EXISTS\(SELECT 1 FROM "dev-schema"\.albums WHERE title = \$1 AND artist = \$2\)`).
+		WithArgs("Blue Train", "John Coltrane").
+		WillReturnRows(rows)
+
+	exists, err := repo.AlbumExists("Blue Train", "John Coltrane")
+	assert.NoError(t, err)
+	assert.True(t, exists)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
