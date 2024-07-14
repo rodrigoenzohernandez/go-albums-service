@@ -1,17 +1,13 @@
 # Makefile
 
-# Run local
-local:
-	go run cmd/app/main.go
-
-install:
-	go mod tidy
+run-local:
+	docker-compose up
 
 build:
-	go build -o bin/app cmd/app/main.go
+	docker-compose build
 
 migrate-up:
-	migrate -database ${POSTGRESQL_URL} -path db/migrations -verbose up
+	docker-compose run --rm migrate-up
 
 migrate-down:
-	migrate -database ${POSTGRESQL_URL} -path db/migrations -verbose up
+	docker-compose run --rm migrate-down
