@@ -1,45 +1,119 @@
+# web-service-gin
 
-web-service-gin
+RestAPI that provides a CRUD of Albums.
 
-API that provides access to albums. All data is stored in memory.
+# 1. Built With
 
-# Endpoints
+- [Go](https://golang.org/) - The Go Programming Language
+- [Docker](https://www.docker.com/) - Containerization platform
+- [Gin](https://github.com/gin-gonic/gin) - A HTTP web framework written in Go
+- [PostgreSQL](https://www.postgresql.org/) - Open source object-relational database system
+  http://localhost:8081/
 
-## /albums
+# 2. How to start the project?
 
-GET – Get a list of all albums, returned as JSON.
+## Start the containers
+
+```shell
+make run-local
+```
+
+## Run the migrations
+
+```shell
+make migrate-up
+```
+
+# 3. Documentation
+
+## Swagger
+
+### Run the command
+
+```shell
+make swagger
+```
+
+### Open swagger at your web browser
+
+[Swagger docs](http://localhost:8081/)
+
+# 4. Test the endpoints
+
+## GET /albums
+
+Get a list of all albums, returned as JSON.
 
 ```bash
 curl http://localhost:8080/albums
 ```
 
-POST – Add a new album from request data sent as JSON.
+## POST /albums
+
+Adds a new album from request data sent as JSON.
 
 ```bash
-curl http://localhost:8080/albums \
-    --include --header \
-    "Content-Type: application/json" \
-    --request "POST" --data \
-    '{"id": "4","title": "The Modern Sound of Betty Carter","artist": "Betty Carter","price": 49.99}'
+curl -X 'POST' \
+  'http://localhost:8080/albums' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "title": "Blue Train",
+  "artist": "John Coltrane",
+  "price": 56.99
+}'
 ```
 
-## /albums/:id
+## GET /albums/:id
 
-GET – Get an album by its ID, returning the album data as JSON.
+Gets an album by its ID, returning the album data as JSON.
 
 ```bash
-curl http://localhost:8080/albums/2
+curl -X 'GET' http://localhost:8080/albums/0d0d9682-a4c4-47ae-854c-49aaa6f65528
 ```
 
-# How to start the project?
+## PUT /albums/:id
 
-Install the dependencies
-```shell
-go get .
+Updates an album.
+
+```bash
+curl -X 'PUT' \
+  'http://localhost:8080/albums/0d0d9682-a4c4-47ae-854c-49aaa6f65528' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "title": "8 Mile",
+  "artist": "Eminem",
+  "price": 56.99
+}'
 ```
 
-Run
-```shell
-go run .
+## DELETE /albums/:id
+
+Deletes an album.
+
+```bash
+curl -X 'DELETE' \
+  'http://localhost:8080/albums/0d0d9682-a4c4-47ae-854c-49aaa6f65528' \
+  -H 'accept: application/json'
 ```
 
+# 5. Other commands
+
+## Run the tests
+
+```bash
+make test
+```
+
+## Delete the resources created on the migration
+
+```bash
+make migrate-down
+```
+
+## Build docker without executing
+
+```bash
+make build
+```
