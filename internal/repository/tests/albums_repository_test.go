@@ -17,7 +17,7 @@ func NewAlbumRepo(db *sql.DB) *repository.AlbumRepository {
 func InitMocks(t *testing.T) (*sql.DB, sqlmock.Sqlmock, *repository.AlbumRepository) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
 	}
 	t.Cleanup(func() { db.Close() })
 
@@ -42,7 +42,7 @@ func TestSelectAll(t *testing.T) {
 	assert.NotEqual(t, "Eminem", albums[1].Artist)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
+		t.Errorf("There were unfulfilled expectations: %s", err)
 	}
 }
 
@@ -60,7 +60,7 @@ func TestSelectByID(t *testing.T) {
 	assert.NotEqual(t, "Eminem", album.Artist)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
+		t.Errorf("There were unfulfilled expectations: %s", err)
 	}
 }
 
@@ -79,7 +79,7 @@ func TestAlbumExists(t *testing.T) {
 	assert.True(t, exists)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
+		t.Errorf("There were unfulfilled expectations: %s", err)
 	}
 }
 
@@ -141,6 +141,53 @@ func TestCreate(t *testing.T) {
 			WillReturnError(errors.New("db error"))
 
 		_, err := repo.Create(newAlbum)
+
+		assert.EqualError(t, err, "db error")
+	})
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("There were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	_, mock, repo := InitMocks(t)
+
+	// Define the album to be updated
+	updatedAlbum := repository.Album{Title: "Updated Album", Artist: "Updated Artist", Price: 10.99}
+	idToUpdate := "existing-id"
+
+	t.Run("Success", func(t *testing.T) {
+		mock.ExpectQuery("UPDATE \"dev-schema\".albums SET").
+			WithArgs(updatedAlbum.Title, updatedAlbum.Artist, updatedAlbum.Price, idToUpdate).
+			WillReturnRows(sqlmock.NewRows([]string{"id", "title", "artist", "price"}).AddRow(idToUpdate, updatedAlbum.Title, updatedAlbum.Artist, updatedAlbum.Price))
+
+		updatedAlbumResult, err := repo.Update(idToUpdate, updatedAlbum)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, updatedAlbumResult)
+		assert.Equal(t, idToUpdate, updatedAlbumResult.ID)
+		assert.Equal(t, updatedAlbum.Title, updatedAlbumResult.Title)
+		assert.Equal(t, updatedAlbum.Artist, updatedAlbumResult.Artist)
+		assert.Equal(t, updatedAlbum.Price, updatedAlbumResult.Price)
+	})
+
+	t.Run("Album not found", func(t *testing.T) {
+		mock.ExpectQuery("UPDATE \"dev-schema\".albums SET").
+			WithArgs(updatedAlbum.Title, updatedAlbum.Artist, updatedAlbum.Price, "non-existing-id").
+			WillReturnError(sql.ErrNoRows)
+
+		_, err := repo.Update("non-existing-id", updatedAlbum)
+
+		assert.EqualError(t, err, "sql: no rows in result set")
+	})
+
+	t.Run("Database error", func(t *testing.T) {
+		mock.ExpectQuery("UPDATE \"dev-schema\".albums SET").
+			WithArgs(updatedAlbum.Title, updatedAlbum.Artist, updatedAlbum.Price, "any-id").
+			WillReturnError(errors.New("db error"))
+
+		_, err := repo.Update("any-id", updatedAlbum)
 
 		assert.EqualError(t, err, "db error")
 	})
