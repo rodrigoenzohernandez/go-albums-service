@@ -3,6 +3,9 @@
 run-local:
 	docker-compose up
 
+test:
+	go test ./...
+
 build:
 	docker-compose build
 
