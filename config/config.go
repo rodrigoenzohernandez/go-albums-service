@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var log = logger.GetLogger("database")
+var log = logger.GetLogger("config")
 
 // Load the environment variables from the .env file.
 func Load() {
