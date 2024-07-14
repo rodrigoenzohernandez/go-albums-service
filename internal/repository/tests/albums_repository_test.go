@@ -117,3 +117,35 @@ func TestDelete(t *testing.T) {
 		t.Errorf("There were unfulfilled expectations: %s", err)
 	}
 }
+
+func TestCreate(t *testing.T) {
+	_, mock, repo := InitMocks(t)
+
+	newAlbum := repository.Album{Title: "New Album", Artist: "New Artist", Price: 9.99}
+
+	t.Run("Success", func(t *testing.T) {
+		mock.ExpectQuery("INSERT INTO \"dev-schema\".albums").
+			WithArgs(newAlbum.Title, newAlbum.Artist, newAlbum.Price).
+			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("new-id"))
+
+		createdAlbum, err := repo.Create(newAlbum)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, createdAlbum)
+		assert.Equal(t, "new-id", createdAlbum.ID)
+	})
+
+	t.Run("Database error", func(t *testing.T) {
+		mock.ExpectQuery("INSERT INTO \"dev-schema\".albums").
+			WithArgs(newAlbum.Title, newAlbum.Artist, newAlbum.Price).
+			WillReturnError(errors.New("db error"))
+
+		_, err := repo.Create(newAlbum)
+
+		assert.EqualError(t, err, "db error")
+	})
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("There were unfulfilled expectations: %s", err)
+	}
+}
